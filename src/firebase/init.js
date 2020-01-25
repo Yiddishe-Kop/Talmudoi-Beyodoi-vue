@@ -12,9 +12,6 @@ const config = {
   measurementId: process.env.VUE_APP_MEASUREMENT_ID,
 };
 
-console.log({ config });
-
-
 class Firebase {
   constructor(app) {
     app.initializeApp(config);

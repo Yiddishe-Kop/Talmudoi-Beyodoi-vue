@@ -1,7 +1,7 @@
 <template>
   <div id="app" class="bg-gray-200">
     <app-header />
-    <main :class="{'full-width': fullWidth}">
+    <main>
       <transition name="page" mode="out-in" appear>
         <router-view />
       </transition>
@@ -53,6 +53,16 @@ export default {
   text-align: center;
   color: #2c3e50;
   min-height: 100vh;
+}
+
+main {
+  max-width: 860px;
+  margin: 0 auto;
+  padding-left: 20px;
+  padding-right: 20px;
+  &.full-width {
+    max-width: 100vw;
+  }
 }
 
 #nav {

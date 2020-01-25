@@ -2,8 +2,8 @@
   <section
     class="card m-3 w-64 relative text-gray-800 rounded-lg shadow cursor-pointer hover:shadow-lg"
   >
-    <g-image
-      src="~/assets/images/aaron-huber-G7sE2S4Lab4-unsplash.jpg"
+    <img
+      src="@/assets/aaron-huber-G7sE2S4Lab4-unsplash.jpg"
       width="400"
       quality="100"
       class="rounded-t-lg"
@@ -30,7 +30,7 @@
       </ul>
 
       <!-- <div class="price">${{apt.price.monthly}} monthly</div> -->
-      <g-link :to="`/listing/${id}`" class="absolute top-0 right-0 bottom-0 left-0" />
+      <router-link :to="`/listing/${id}`" class="absolute top-0 right-0 bottom-0 left-0" />
     </div>
   </section>
 </template>
