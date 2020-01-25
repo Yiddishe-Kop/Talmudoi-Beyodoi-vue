@@ -1,0 +1,52 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url("https://fonts.googleapis.com/css?family=Fira+Sans:400,600,700,800&display=swap");
+
+:root {
+  --brand: #e05d04;
+}
+
+body {
+  input {
+    font-family: "Fira Sans", sans-serif;
+  }
+}
+
+h1 {
+  font-weight: 600;
+  @apply text-2xl tracking-widest uppercase;
+}
+
+p {
+  margin-bottom: 6px;
+}
+
+a {
+  @apply text-gray-800;
+  transition: all 0.25s ease;
+  &:hover {
+    color: var(--brand);
+  }
+}
+
+// Vue transitions
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 0.3s;
+}
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.page-enter-active,
+.page-leave-active {
+  transition: all 0.3s;
+}
+.page-enter,
+.page-leave-to {
+  transform: scale(0.5);
+  opacity: 0;
+}
