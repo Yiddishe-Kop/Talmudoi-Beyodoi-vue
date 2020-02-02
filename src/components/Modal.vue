@@ -14,17 +14,20 @@
           <button @click="$emit('action1')" class="main">{{action1}}</button>
         </div>
       </section>
+      <key-press :key-code="27" @pressed="$emit('close')" />
     </div>
   </transition>
 </template>
 
 <script>
 import Icon from "@/components/UI/Icon";
+import KeyPress from "@/components/UI/KeyPress";
 
 export default {
   name: "Modal",
   components: {
-    Icon
+    Icon,
+    KeyPress
   },
   props: ["title", "action1", "action2", "isOpen"]
 };
@@ -48,6 +51,7 @@ export default {
     width: 450px;
     // height: 400px;
     max-width: 95vw;
+    max-height: 500px;
     @apply relative flex flex-col items-center justify-between bg-gray-300 rounded shadow-2xl;
 
     .title {

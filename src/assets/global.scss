@@ -50,3 +50,13 @@ a {
   transform: scale(0.5);
   opacity: 0;
 }
+
+.slideUp-enter-active,
+.slideUp-leave-active {
+  transition: all 0.3s;
+}
+.slideUp-enter,
+.slideUp-leave-to {
+  transform: translateY(10px);
+  opacity: 0;
+}

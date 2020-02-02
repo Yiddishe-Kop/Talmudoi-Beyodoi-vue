@@ -29,6 +29,10 @@ export default {
 <style lang='scss'>
 .avatar {
   cursor: pointer;
+  @apply rounded-full p-1;
+  &:hover {
+    @apply bg-gray-300;
+  }
   img {
     width: 44px;
     border-radius: 50%;

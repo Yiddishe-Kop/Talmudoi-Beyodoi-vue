@@ -1,21 +1,19 @@
 <template>
   <div class="login">
-    <div class="tabs">
-      <span :class="{active: action == 'login'}" @click="action = 'login'">Login</span>
-      |
-      <span :class="{active: action == 'signup'}" @click="action = 'signup'">Signup</span>
-    </div>
+    <switcher @switch="handleSwitch" option1="Login" option2="Signup" />
 
-    <input-group
-      v-for="(field, key) in fields"
-      :key="key"
-      :name="key"
-      v-model="fields[key]"
-      :placeholder="key"
-    />
+    <transition-group name="page">
+      <input-group
+        v-for="(field, key) in fields[action]"
+        :key="key"
+        :name="key"
+        v-model="fields[key]"
+        :placeholder="key"
+      />
+    </transition-group>
 
     <transition name="fade">
-      <ui-button v-if="action == 'login'" @click.native="signUp" cta>Sign Up</ui-button>
+      <ui-button v-if="action == ACTIONS.SIGNUP" @click.native="signUp" cta>Sign Up</ui-button>
       <ui-button v-else @click.native="login" cta>Login</ui-button>
     </transition>
 
@@ -35,20 +33,35 @@
  <script>
 import InputGroup from "@/components/UI/InputGroup";
 import UiButton from "@/components/UI/UiButton";
+import Switcher from "@/components/UI/Switcher";
 
 export default {
   name: "Login",
-  components: { UiButton, InputGroup },
+  components: { UiButton, InputGroup, Switcher },
   data() {
     return {
-      action: "login",
-      fields: {
-        email: "",
-        password: ""
-      }
+      ACTIONS: {
+        LOGIN: 0,
+        SIGNUP: 1
+      },
+      action: 0,
+      fields: [
+        {
+          email: "",
+          password: ""
+        },
+        {
+          email: "",
+          password: "",
+          "repeat password": ""
+        }
+      ]
     };
   },
   methods: {
+    handleSwitch(index) {
+      this.action = index;
+    },
     signUp() {
       this.$store.state.firebase
         .doCreateUserWithEmailAndPassword(
