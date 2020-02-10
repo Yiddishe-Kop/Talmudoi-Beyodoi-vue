@@ -3,10 +3,6 @@ const { colors } = require('tailwindcss/defaultTheme')
 module.exports = {
   important: true,
   theme: {
-    fontFamily: {
-      display: ['Fira Sans', 'sans-serif'],
-      body: ['Fira Sans', 'sans-serif'],
-    },
     extend: {
       colors: {
         brand: '#345679',

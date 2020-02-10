@@ -1,8 +1,7 @@
 @tailwind base;
 @tailwind components;
-@tailwind utilities;
 
-@import url("https://fonts.googleapis.com/css?family=Fira+Sans:400,600,700,800&display=swap");
+@import url("https://fonts.googleapis.com/css?family=Heebo:400,700&display=swap&subset=hebrew");
 
 :root {
   --brand: #345679;
@@ -70,3 +69,5 @@ main {
   transform: translateY(10px);
   opacity: 0;
 }
+
+@tailwind utilities;

@@ -3,10 +3,10 @@
     <control-panel @get-text="getText" />
 
     <section style="height: calc(100vh - 130px);">
-      <loader v-if="state === 1" />
+      <loader v-if="state === STATES.LOADING" />
 
       <div
-        v-else-if="state === 2"
+        v-else-if="state === STATES.READY"
         class="h-full flex text pb-2 text-2xl text-justify leading-relaxed"
       >
         <div class="relative main-content pt-8 w-3/4 h-full px-6 overflow-scroll">
@@ -45,21 +45,25 @@
         </div>
 
         <div class="commentaries w-1/4 h-full px-6 pt-8 overflow-scroll">
-          <loader v-if="commentary.state === 1" />
+          <loader v-if="commentary.state === STATES.LOADING" />
 
           <div
-            v-else-if="commentary.state === 2"
+            v-else-if="commentary.state === STATES.READY"
             v-for="com in commentaries"
             :key="com._id"
             class="mb-6 border-b border-gray-500"
           >
-            <h2 class="font-bold">{{com.heTitle}}</h2>
+            <h2 class="font-bold text-lg">{{com.heTitle}}</h2>
             <p class="text-sm" v-html="com.he.length ? com.he : com.text"></p>
+          </div>
+
+          <div v-else class="flex items-center justify-center h-full text-gray-500">
+            <p>מפרשים יופיעו כאן</p>
           </div>
         </div>
       </div>
 
-      <p v-else-if="state === 3">חיפוש זה לא העלה שום תוצאות 😕</p>
+      <p v-else-if="state === STATES.ERROR">חיפוש זה לא העלה שום תוצאות 😕</p>
       <p v-else>חפש משהו למעלה 👆</p>
     </section>
   </div>
@@ -93,7 +97,8 @@ export default {
       commentary: {
         state: STATE.EMPTY,
         commentaries: []
-      }
+      },
+      STATES: STATE
     };
   },
   methods: {
@@ -101,6 +106,10 @@ export default {
       if (!searchQuery) return;
       this.state = STATE.LOADING;
       this.translation = "";
+      this.commentary = {
+        commentaries: [],
+        state: STATE.EMPTY
+      };
       fetch(`${SEFARIA_API_URL}texts/${searchQuery}`).then(data => {
         data.json().then(json => {
           // console.log(json);
