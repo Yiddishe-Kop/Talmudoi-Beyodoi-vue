@@ -1,5 +1,5 @@
 <template>
-  <div class="popover absolute rounded-lg shadow-lg bg-white p-6">
+  <div class="popover absolute rounded-lg shadow-lg bg-white p-6 z-10">
     <slot />
     <key-press :key-code="27" @pressed="$emit('close')" />
   </div>

@@ -30,6 +30,7 @@
         ></span>
       </div>
 
+      <p v-else-if="state === 3">חיפוש זה לא העלה שום תוצאות 😕</p>
       <p v-else>חפש משהו למעלה 👆</p>
     </main>
 
@@ -54,7 +55,8 @@ const SEFARIA_API_URL = "https://www.sefaria.org/api/";
 const STATE = {
   EMPTY: 0,
   LOADING: 1,
-  READY: 2
+  READY: 2,
+  ERROR: 3
 };
 
 export default {
@@ -79,12 +81,15 @@ export default {
       fetch(`${SEFARIA_API_URL}texts/${searchQuery}`).then(data => {
         data.json().then(json => {
           console.log(json);
-
-          this.state = STATE.READY;
-          this.title = json.heTitle;
-          this.text = json[this.lang == "he" ? "he" : "text"];
-          this.categories = json.categories;
-          this.json = json;
+          if (json.error) {
+            this.state = STATE.ERROR;
+          } else {
+            this.state = STATE.READY;
+            this.title = json.heTitle;
+            this.text = json[this.lang == "he" ? "he" : "text"];
+            this.categories = json.categories;
+            this.json = json;
+          }
         });
       });
     }

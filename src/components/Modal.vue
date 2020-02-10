@@ -1,6 +1,12 @@
 <template>
   <transition name="modal-fade">
-    <div v-if="isOpen" @click.self="$emit('close')" @keyup.esc="$emit('close')" class="overlay">
+    <div
+      v-if="isOpen"
+      @click.self="$emit('close')"
+      @keyup.esc="$emit('close')"
+      class="overlay"
+      dir="ltr"
+    >
       <section class="modal">
         <div class="title">
           <h5>{{title}}</h5>
