@@ -1,11 +1,9 @@
 <template>
-  <div id="app" class="bg-gray-200">
+  <div id="app" class="bg-gray-200 flex flex-col max-h-screen overflow-hidden" dir="rtl">
     <app-header />
-    <main>
-      <transition name="page" mode="out-in" appear>
-        <router-view />
-      </transition>
-    </main>
+    <transition name="page" mode="out-in" appear>
+      <router-view />
+    </transition>
 
     <Modal
       :is-open="modal.isOpen"
@@ -53,16 +51,6 @@ export default {
   text-align: center;
   color: #2c3e50;
   min-height: 100vh;
-}
-
-main {
-  max-width: 860px;
-  margin: 0 auto;
-  padding-left: 20px;
-  padding-right: 20px;
-  &.full-width {
-    max-width: 100vw;
-  }
 }
 
 #nav {

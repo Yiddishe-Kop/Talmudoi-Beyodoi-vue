@@ -1,5 +1,5 @@
 <template>
-  <header>
+  <header class="px-6 py-2 flex justify-between items-center bg-gray-800 shadow">
     <router-link to="/">
       <logo />
     </router-link>
@@ -8,8 +8,8 @@
       <router-link class="nav__link" to="/about/">About</router-link>
       <avatar @click="handleAvatarClick" />
       <transition name="slideUp">
-        <popover @close="showPopover = false" v-if="showPopover" :style="`top: 75px; right: 16px;`">
-          <img v-if="userImage" :src="userImage" class="w-20 h-20 mx-auto mb-2" />
+        <popover @close="showPopover = false" v-if="showPopover" :style="`top: 75px; left: 16px;`">
+          <img v-if="userImage" :src="userImage" class="w-20 h-20 mx-auto mb-2 rounded-full" />
           <h2 class="text-gray-800 text-2xl font-bold">{{$store.state.user.displayName}}</h2>
           <h4 class="text-gray-600">{{$store.state.user.email}}</h4>
           <button
@@ -74,16 +74,13 @@ export default {
 
 <style lang="scss">
 header {
-  height: 70px;
-  @apply mb-12 px-6 flex justify-between items-center bg-white shadow;
-
   .nav {
     @apply flex items-center;
     & > * {
       @apply ml-4;
     }
     a.router-link-exact-active {
-      @apply text-brand;
+      @apply text-gray-100;
     }
   }
 }

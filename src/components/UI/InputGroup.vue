@@ -1,13 +1,14 @@
 <template>
   <div class="input-group">
-    <label :for="name">{{name}}</label>
+    <label v-if="name" :for="name">{{name}}</label>
     <input
-      @input="$emit('input', $event.target.value)"
       :value="value"
       type="text"
       :id="name"
       :placeholder="placeholder"
       :class="[size, validation]"
+      v-bind="$attrs"
+      v-on="inputListeners"
     />
   </div>
 </template>
@@ -33,13 +34,23 @@ export default {
         return ["small", "medium", "large"].indexOf(value) !== -1;
       }
     }
+  },
+  inheritAttrs: false,
+  computed: {
+    inputListeners: function() {
+      var vm = this;
+      return Object.assign({}, this.$listeners, {
+        input: function(event) {
+          vm.$emit("input", event.target.value);
+        }
+      });
+    }
   }
 };
 </script>
 
 <style lang="scss">
 .input-group {
-  @apply mb-2;
   label {
     @apply block mb-1 font-semibold text-sm uppercase text-gray-800;
   }
@@ -48,7 +59,7 @@ export default {
     min-width: 240px;
     @apply text-gray-900 rounded border-2 border-solid border-gray-400;
     &::placeholder {
-      @apply text-gray-400;
+      @apply text-gray-600;
     }
     &:focus {
       @apply border-brand;

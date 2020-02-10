@@ -23,7 +23,11 @@ export default {
 
 <style lang="scss" scoped>
 button {
-  @apply flex items-center py-2 px-4 bg-gray-700 text-gray-100 rounded;
+  transition: all 0.3s ease;
+  @apply flex items-center py-2 px-4 bg-gray-600 text-gray-100 rounded;
+  &:hover {
+    @apply bg-gray-500;
+  }
   &.cta {
     @apply bg-brand;
   }
