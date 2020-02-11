@@ -68,7 +68,7 @@
             :key="com[0].id"
             :commentary="com"
             :title="title"
-            @open-link="getText(com.ref)"
+            @open-link="getText(com[0].ref)"
           />
 
           <div v-else class="flex items-center justify-center h-full text-gray-500">
@@ -131,8 +131,6 @@ export default {
         } else {
           acc[commentaryName].push(commData);
         }
-        console.log({ acc });
-
         return acc;
       }, {});
       return result;
