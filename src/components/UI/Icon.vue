@@ -8,14 +8,14 @@
 </template>
 
 <script>
-import iconSVG from "@/utils/icons.js";
+import SVGicons from "@/utils/icons.js";
 
 export default {
   name: "Icon",
   props: ["icon", "viewbox"],
   data() {
     return {
-      icons: iconSVG
+      icons: SVGicons
     };
   }
 };

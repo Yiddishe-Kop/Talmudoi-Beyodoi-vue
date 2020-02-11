@@ -3,76 +3,89 @@
     <control-panel @get-text="getText" />
 
     <section style="height: calc(100vh - 130px);">
-      <loader v-if="state === STATES.LOADING" />
-
-      <div
-        v-else-if="state === STATES.READY"
-        class="h-full flex text pb-2 text-2xl text-justify leading-relaxed"
-      >
-        <div class="relative main-content pt-8 w-3/4 h-full px-6 overflow-scroll">
-          <div class="title-bar flex items-center justify-between">
-            <h2 class="ml-2 font-bold text-gray-600">{{json.heRef}}</h2>
+      <div class="h-full flex text text-2xl text-justify leading-relaxed">
+        <section class="main flex flex-col w-3/4 bg-white">
+          <div class="title-bar py-2 px-4 bg-gray-600 flex items-center justify-between">
+            <h2 v-if="json.heRef" class="ml-2 font-bold text-gray-200">{{json.heRef}}</h2>
             <div class="actions flex">
-              <ui-button
+              <icon
                 v-if="json.prev"
                 @click.native="getText(json.prev)"
-                classes="text-sm py-1 ml-1"
-              >הקודם</ui-button>
-              <ui-button
+                class="text-4xl py-1 ml-2 cursor-pointer transform rotate-180"
+                icon="arrowCircleRight"
+              />
+              <icon
                 v-if="json.next"
                 @click.native="getText(json.next)"
-                classes="text-sm py-1"
-              >הבא</ui-button>
+                class="text-4xl py-1 cursor-pointer"
+                icon="arrowCircleRight"
+              />
             </div>
           </div>
-          <span
-            v-for="(segment, i) in text"
-            class="segment"
-            :key="segment.length + Math.random()"
-            v-html="segment"
-            @click.stop="handleSegmentClick(i)"
-          ></span>
 
-          <transition name="slideUp">
-            <div
-              v-show="translation"
-              style="max-width: 80%; max-height: 120px; overflow: auto; margin: auto;"
-              class="translation absolute bottom-0 right-0 left-0 mb-8 text-base text-center bg-gray-800 text-gray-100 py-2 px-6 rounded"
-            >
-              <span v-html="translation"></span>
-            </div>
-          </transition>
-        </div>
-
-        <div class="commentaries w-1/4 h-full px-6 pt-8 overflow-scroll">
-          <loader v-if="commentary.state === STATES.LOADING" />
+          <loader v-if="state === STATES.LOADING" />
 
           <div
-            v-else-if="commentary.state === STATES.READY"
-            v-for="com in commentaries"
-            :key="com._id"
-            class="mb-6 border-b border-gray-500"
+            v-else-if="state === STATES.READY"
+            class="relative flex-1 flex flex-col main-content"
           >
-            <h2 class="font-bold text-lg">{{com.heTitle}}</h2>
-            <p class="text-sm" v-html="com.he.length ? com.he : com.text"></p>
+            <section class="text-content overflow-scroll" style="flex: 8 0 1px;">
+              <div class="mx-auto p-6 max-w-screen-sm">
+                <span
+                  v-for="(segment, i) in text"
+                  class="segment"
+                  :class="{highlighted: higlightedSegment == i + 1, selected: selectedSegment == i}"
+                  :key="segment.length + Math.random()"
+                  v-html="segment"
+                  @click.stop="handleSegmentClick(i)"
+                ></span>
+              </div>
+            </section>
+
+            <transition name="slideUp" appear mode="out-in">
+              <div
+                v-if="translation"
+                style="height: 120px; flex: 1 3 0px;"
+                class="translation m-2 mt-0 text-base text-center bg-gray-800 text-gray-100 py-2 px-6 rounded overflow-auto"
+              >
+                <span v-html="translation"></span>
+              </div>
+            </transition>
           </div>
+
+          <p v-else-if="state === STATES.ERROR">חיפוש זה לא העלה שום תוצאות 😕</p>
+          <p v-else>חפש משהו למעלה 👆</p>
+        </section>
+
+        <div
+          class="commentaries bg-gray-100 shadow-md rounded w-1/4 h-full px-6 pt-8 overflow-scroll"
+        >
+          <loader v-if="commentary.state === STATES.LOADING" />
+
+          <commentary
+            v-else-if="commentary.state === STATES.READY"
+            v-for="(com, title) in formattedCommentaries"
+            :key="com[0].id"
+            :commentary="com"
+            :title="title"
+            @open-link="getText(com.ref)"
+          />
 
           <div v-else class="flex items-center justify-center h-full text-gray-500">
             <p>מפרשים יופיעו כאן</p>
           </div>
         </div>
       </div>
-
-      <p v-else-if="state === STATES.ERROR">חיפוש זה לא העלה שום תוצאות 😕</p>
-      <p v-else>חפש משהו למעלה 👆</p>
     </section>
   </div>
 </template>
 
 <script>
 import ControlPanel from "@/components/ControlPanel";
+import Commentary from "@/components/Commentary";
 import Loader from "@/components/UI/Loader";
 import UiButton from "@/components/UI/UiButton";
+import Icon from "@/components/UI/Icon";
 
 const SEFARIA_API_URL = "https://www.sefaria.org/api/";
 const STATE = {
@@ -84,7 +97,7 @@ const STATE = {
 
 export default {
   name: "home",
-  components: { ControlPanel, UiButton, Loader },
+  components: { ControlPanel, Commentary, UiButton, Loader, Icon },
   data() {
     return {
       lang: "he",
@@ -92,6 +105,8 @@ export default {
       text: [],
       translation: "",
       categories: [],
+      higlightedSegment: null,
+      selectedSegment: null,
       state: STATE.EMPTY,
       json: {},
       commentary: {
@@ -101,9 +116,32 @@ export default {
       STATES: STATE
     };
   },
+  computed: {
+    formattedCommentaries() {
+      let result = this.commentary.commentaries.reduce((acc, comm) => {
+        let commentaryName = comm.collectiveTitle.he;
+        let commData = {
+          id: comm._id,
+          ref: comm.ref,
+          he: comm.he,
+          en: comm.text
+        };
+        if (!acc[commentaryName]) {
+          acc[commentaryName] = [commData];
+        } else {
+          acc[commentaryName].push(commData);
+        }
+        console.log({ acc });
+
+        return acc;
+      }, {});
+      return result;
+    }
+  },
   methods: {
     getText(searchQuery) {
       if (!searchQuery) return;
+      this.selectedSegment = null;
       this.state = STATE.LOADING;
       this.translation = "";
       this.commentary = {
@@ -112,35 +150,56 @@ export default {
       };
       fetch(`${SEFARIA_API_URL}texts/${searchQuery}`).then(data => {
         data.json().then(json => {
-          // console.log(json);
+          console.log(json);
           if (json.error) {
             this.state = STATE.ERROR;
           } else {
+            // console.log(json);
+
             this.state = STATE.READY;
             this.title = json.heTitle;
-            this.text = json[this.lang == "he" ? "he" : "text"];
+            this.text = json[this.lang == "he" && json.he ? "he" : "text"];
             this.categories = json.categories;
             this.json = json;
+
+            let segmentIndex = json.ref.match(/(:)(\d+)$/);
+            if (segmentIndex) {
+              this.higlightedSegment = segmentIndex[segmentIndex.length - 1];
+            } else {
+              this.higlightedSegment = null;
+            }
           }
         });
       });
     },
     getLinks(ref) {
+      ref = this.stripExtraIndex(ref);
+      // console.log("ref: ", ref);
       if (!ref) return;
+
       this.commentary.state = STATE.LOADING;
       fetch(`${SEFARIA_API_URL}links/${ref}`).then(data => {
         data.json().then(json => {
-          console.log(json);
+          // console.log(json);
           if (!json.error) {
             this.commentary.state = STATE.READY;
-            this.commentaries = json;
+            this.commentary.commentaries = json;
+          } else {
+            this.commentary.state = STATE.ERROR;
           }
         });
       });
     },
     handleSegmentClick(i) {
       this.translation = this.json.text[i];
+      this.selectedSegment = i;
       this.getLinks(`${this.json.ref}:${i + 1}`);
+    },
+    stripExtraIndex(ref) {
+      if (ref.match(/:/g) && ref.match(/:/g).length > 1) {
+        ref = ref.replace(/:[^:]+$/, "");
+      }
+      return ref;
     }
   }
 };
@@ -152,7 +211,13 @@ export default {
     @apply px-1 cursor-pointer rounded;
     transition: all 0.15s ease-in;
     &:hover {
-      @apply bg-blue-200 text-gray-900;
+      @apply bg-blue-100 text-blue-800;
+    }
+    &.selected {
+      @apply bg-blue-200 text-blue-800;
+    }
+    &.highlighted {
+      @apply bg-blue-600 text-blue-200;
     }
   }
   big {
