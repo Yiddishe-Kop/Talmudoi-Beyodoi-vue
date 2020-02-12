@@ -1,28 +1,10 @@
 <template>
   <div class="home relative flex flex-col" @click="translation = ''">
-    <control-panel @get-text="getText" />
+    <control-panel @get-text="getText" :title="json.heRef" :prev="json.prev" :next="json.next" />
 
     <section style="height: calc(100vh - 130px);">
       <div class="h-full flex text text-2xl text-justify leading-relaxed">
         <section class="main flex flex-col w-3/4 bg-white">
-          <div class="title-bar py-2 px-4 bg-gray-600 flex items-center justify-between">
-            <h2 v-if="json.heRef" class="ml-2 font-bold text-gray-200">{{json.heRef}}</h2>
-            <div class="actions flex">
-              <icon
-                v-if="json.prev"
-                @click.native="getText(json.prev)"
-                class="text-4xl py-1 ml-2 cursor-pointer transform rotate-180"
-                icon="arrowCircleRight"
-              />
-              <icon
-                v-if="json.next"
-                @click.native="getText(json.next)"
-                class="text-4xl py-1 cursor-pointer"
-                icon="arrowCircleRight"
-              />
-            </div>
-          </div>
-
           <loader v-if="state === STATES.LOADING" />
 
           <div
